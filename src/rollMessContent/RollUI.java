@@ -10,9 +10,12 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
 
 /**
  * Created by TIMBULI REMUS K@puc!n on 07-May-16.
@@ -36,9 +39,10 @@ public class RollUI extends Pane {
     //------------------------------------------------------------------------------------------------------------------
 
     // Chat connexion variables-----------------------------------------------------------------------------------------
-    private ObjectOutputStream toServer;
-    private ObjectInputStream fromServer;
-    private String host = "localhost";
+    private ObjectOutputStream toClient;
+    private ObjectInputStream fromClient;
+    private Object message;
+    private ServerSocket chatServer;
     private final int chatPort = 9000;
     private Socket chatSocket;
     //------------------------------------------------------------------------------------------------------------------
@@ -59,6 +63,7 @@ public class RollUI extends Pane {
     // Constructor------------------------------------------------------------------------------------------------------
     public RollUI() {
         layoutSetup();
+        chatThread();
         userActions();
     }
     //------------------------------------------------------------------------------------------------------------------
@@ -88,6 +93,25 @@ public class RollUI extends Pane {
         root.setPrefHeight(bounds.getHeight() / 2);
         getChildren().add(root);
         //--------------------------------------------------------------------------------------------------------------
+    }
+    //------------------------------------------------------------------------------------------------------------------
+
+    // Chat Thread method-----------------------------------------------------------------------------------------------
+    private void chatThread(){
+        new Thread(() ->{
+            try {
+                chatServer = new ServerSocket(chatPort);
+                textArea.appendText("Server started at: " + "\n" + new Date() + "\n");
+                chatSocket = chatServer.accept();
+                while (true){
+                    fromClient = new ObjectInputStream(chatSocket.getInputStream());
+                    message = fromClient.readObject();
+                    textArea.appendText("Received from client: " + chatSocket.getPort() + "\n" + message);
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
     //------------------------------------------------------------------------------------------------------------------
 
