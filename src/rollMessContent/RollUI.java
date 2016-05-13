@@ -1,5 +1,6 @@
 package rollMessContent;
 
+import alerts.EmptyAlert;
 import alerts.ExitAlert;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
@@ -98,13 +99,13 @@ public class RollUI extends Pane {
     //------------------------------------------------------------------------------------------------------------------
 
     // Chat Thread method-----------------------------------------------------------------------------------------------
-    private void chatThread(){
-        new Thread(() ->{
+    private void chatThread() {
+        new Thread(() -> {
             try {
                 chatServer = new ServerSocket(chatPort);
                 textArea.appendText("Server started at: " + "\n" + new Date() + "\n");
                 chatSocket = chatServer.accept();
-                while (true){
+                while (true) {
                     fromClient = new ObjectInputStream(chatSocket.getInputStream());
                     message = fromClient.readObject();
                     textArea.appendText("Received from client: " + chatSocket.getPort() + "\n" + message);
@@ -117,17 +118,18 @@ public class RollUI extends Pane {
     //------------------------------------------------------------------------------------------------------------------
 
     // User actions method----------------------------------------------------------------------------------------------
-    private void userActions(){
+    private void userActions() {
         sendMessage();
+        saveMessages();
         clearTable();
         exitSetup();
     }
     //------------------------------------------------------------------------------------------------------------------
 
     // Sending message method-------------------------------------------------------------------------------------------
-    private void sendMessage(){
-        textField.setOnKeyPressed(e ->{
-            if (e.getCode() == KeyCode.ENTER){
+    private void sendMessage() {
+        textField.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
                 try {
                     toClient = new ObjectOutputStream(chatSocket.getOutputStream());
                     toClient.writeObject(textField.getText());
@@ -142,24 +144,28 @@ public class RollUI extends Pane {
     }
     //------------------------------------------------------------------------------------------------------------------
 
+    // Save messages to file--------------------------------------------------------------------------------------------
+    private void saveMessages() {
+        save.setOnAction(e -> {
+            if (textArea.getText().isEmpty()) {
+                new EmptyAlert();
+            }
+        });
+    }
+    //------------------------------------------------------------------------------------------------------------------
+
     // Clear table method-----------------------------------------------------------------------------------------------
-    private void clearTable(){
+    private void clearTable() {
         clear.setOnAction(e -> textArea.clear());
     }
     //------------------------------------------------------------------------------------------------------------------
 
     // Exit method -----------------------------------------------------------------------------------------------------
-    private void exitSetup(){
-        exit.setOnAction(e ->{
+    private void exitSetup() {
+        exit.setOnAction(e -> {
             e.consume();
             new ExitAlert();
         });
-    }
-    //------------------------------------------------------------------------------------------------------------------
-
-    // Getters & Setters------------------------------------------------------------------------------------------------
-    public Socket getChatSocket() {
-        return chatSocket;
     }
     //------------------------------------------------------------------------------------------------------------------
 }
