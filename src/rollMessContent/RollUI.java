@@ -119,6 +119,7 @@ public class RollUI extends Pane {
     private void userActions() {
         sendMessage();
         saveMessages();
+        loadMessages();
         clearTable();
         exitSetup();
     }
@@ -164,6 +165,25 @@ public class RollUI extends Pane {
         });
     }
     //------------------------------------------------------------------------------------------------------------------
+
+    // Load messages from file------------------------------------------------------------------------------------------
+    private void loadMessages(){
+        load.setOnAction(e ->{
+            fileStage = new Stage();
+            chooser = new FileChooser();
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
+            file = chooser.showOpenDialog(fileStage);
+            try {
+                fromFile = new ObjectInputStream(new FileInputStream(file));
+                fileMessages = fromFile.readObject();
+                textArea.appendText(fileMessages.toString());
+            } catch (IOException | ClassNotFoundException e1) {
+                e1.printStackTrace();
+            }
+        });
+    }
+    //------------------------------------------------------------------------------------------------------------------
+
 
     // Clear table method-----------------------------------------------------------------------------------------------
     private void clearTable() {
