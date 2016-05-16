@@ -36,7 +36,7 @@ public class MainRoll extends Application {
         // Stage setup--------------------------------------------------------------------------------------------------
         pane.getChildren().add(new RollUI());
         stage.setTitle("RollMessServer");
-        stage.setX(bounds.getWidth() / 3);
+        stage.setX(bounds.getWidth() / 8);
         stage.setY(bounds.getHeight() / 3);
         stage.setScene(scene);
         stage.show();
