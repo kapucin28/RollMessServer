@@ -18,6 +18,9 @@ import java.util.Date;
 
 /**
  * Created by TIMBULI REMUS K@puc!n on 07-May-16.
+ *
+ *      This is the class in which the GUI and network connections
+ * are initialized
  */
 public class RollUI extends Pane {
 
