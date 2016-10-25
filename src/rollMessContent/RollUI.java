@@ -17,11 +17,11 @@ import java.util.Date;
 
 /**
  * Created by TIMBULI REMUS K@puc!n on 07-May-16.
- *
- *      This is the class in which the GUI and network connections
+ * <p>
+ * This is the class in which the GUI and network connections
  * are initialized
  */
-public class RollUI extends Pane implements Scale{
+public class RollUI extends Pane implements Scale {
 
     // Menu variables---------------------------------------------------------------------------------------------------
     private final MenuBar menuBar = new MenuBar();
@@ -104,11 +104,11 @@ public class RollUI extends Pane implements Scale{
                 chatServer = new ServerSocket(chatPort);
                 textArea.appendText("Server started at: " + "\n" + new Date() + "\n");
                 chatSocket = chatServer.accept();
-                while (true) {
+                do {
                     fromClient = new ObjectInputStream(chatSocket.getInputStream());
                     message = fromClient.readObject();
                     textArea.appendText("Received from client: " + chatSocket.getPort() + "\n" + message);
-                }
+                } while (chatSocket.isConnected());
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
