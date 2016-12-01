@@ -2,6 +2,7 @@ package rollMessContent;
 
 import alerts.EmptyAlert;
 import alerts.ExitAlert;
+import interfaces.ObjectTitles;
 import interfaces.Scale;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -25,12 +26,12 @@ public class RollUI extends Pane implements Scale {
 
     // Menu variables---------------------------------------------------------------------------------------------------
     private final MenuBar menuBar = new MenuBar();
-    private final Menu fileMenu = new Menu("_File");
-    private final Menu editMenu = new Menu("_Edit");
-    private final MenuItem save = new MenuItem("Save As...");
-    private final MenuItem load = new MenuItem("Load...");
-    private final MenuItem exit = new MenuItem("Exit");
-    private final MenuItem clear = new MenuItem("Clear Text");
+    private final Menu fileMenu = new Menu(ObjectTitles.fileMenu);
+    private final Menu editMenu = new Menu(ObjectTitles.editMenu);
+    private final MenuItem save = new MenuItem(ObjectTitles.save);
+    private final MenuItem load = new MenuItem(ObjectTitles.load);
+    private final MenuItem exit = new MenuItem(ObjectTitles.exit);
+    private final MenuItem clear = new MenuItem(ObjectTitles.clear);
     private final SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
     //------------------------------------------------------------------------------------------------------------------
 
@@ -82,8 +83,8 @@ public class RollUI extends Pane implements Scale {
         textArea.setPrefHeight(SCREEN_HEIGHT / 3 + 75);
         textArea.setPrefWidth(SCREEN_WIDTH / 4);
         textField.setPrefWidth(SCREEN_WIDTH / 3);
-        textArea.setPromptText("Messages received");
-        textField.setPromptText("Write message");
+        textArea.setPromptText(ObjectTitles.textAreaPrompt);
+        textField.setPromptText(ObjectTitles.textFieldPrompt);
         //--------------------------------------------------------------------------------------------------------------
 
         // Root setup---------------------------------------------------------------------------------------------------
@@ -102,12 +103,12 @@ public class RollUI extends Pane implements Scale {
         new Thread(() -> {
             try {
                 chatServer = new ServerSocket(chatPort);
-                textArea.appendText("Server started at: " + "\n" + new Date() + "\n");
+                textArea.appendText(ObjectTitles.textAreaAppend + "\n" + new Date() + "\n");
                 chatSocket = chatServer.accept();
                 do {
                     fromClient = new ObjectInputStream(chatSocket.getInputStream());
                     message = fromClient.readObject();
-                    textArea.appendText("Received from client: " + chatSocket.getPort() + "\n" + message);
+                    textArea.appendText(ObjectTitles.textAreaAppendReceived + chatSocket.getPort() + "\n" + message);
                 } while (chatSocket.isConnected());
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
@@ -137,7 +138,7 @@ public class RollUI extends Pane implements Scale {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-                textArea.appendText("Sent: " + textField.getText() + "\n");
+                textArea.appendText(ObjectTitles.textAreaAppendSent + textField.getText() + "\n");
                 textField.clear();
             }
         });
@@ -152,7 +153,9 @@ public class RollUI extends Pane implements Scale {
             } else {
                 fileStage = new Stage();
                 chooser = new FileChooser();
-                chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
+                chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+                        ObjectTitles.extensionFilter,
+                        ObjectTitles.extensionType));
                 file = chooser.showSaveDialog(fileStage);
                 try {
                     toFile = new ObjectOutputStream(new FileOutputStream(file));
@@ -172,7 +175,9 @@ public class RollUI extends Pane implements Scale {
         load.setOnAction(e -> {
             fileStage = new Stage();
             chooser = new FileChooser();
-            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+                    ObjectTitles.extensionFilter,
+                    ObjectTitles.extensionType));
             file = chooser.showOpenDialog(fileStage);
             try {
                 fromFile = new ObjectInputStream(new FileInputStream(file));
